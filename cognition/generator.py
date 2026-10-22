@@ -32,7 +32,11 @@ def _utcnow():
 
 
 class Tracer:
-    """Append only JSONL trace writer. Traces are runtime output only."""
+    """Append only JSONL trace writer. Traces are runtime output only.
+
+    Every entry is written to the trace file AND printed to stdout as a
+    JSON line, so judges see the agent work live: the guides require
+    logs on stdout and in logs/."""
 
     def __init__(self, trace_path, trace_id=None):
         self.trace_path = trace_path
@@ -69,6 +73,7 @@ class Tracer:
         with self._lock:
             with open(self.trace_path, "a", encoding="utf-8") as fh:
                 fh.write(line + "\n")
+            print(line, flush=True)
         return entry
 
 
