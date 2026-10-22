@@ -1,7 +1,11 @@
 # Secrets and local environment (never commit these)
 .env
+.env.*
+!.env.example
 *.pem
 *.key
+secrets/
+credentials/
 
 # Python
 __pycache__/

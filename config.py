@@ -72,6 +72,13 @@ class AppConfig:
             self.meterless_base_url.rstrip("/"))
         self.zetaris_rest_url = _resolve_docker_host(
             self.zetaris_rest_url.rstrip("/"))
+        # NEVER rule, enforced (not just documented): meterless/auto
+        # may route to a non NVIDIA model, so it is never honored.
+        if self.meterless_model.strip().lower() == "meterless/auto":
+            import sys
+            print("WARNING: meterless/auto is never used; falling "
+                  "back to %s" % DEFAULT_MODEL, file=sys.stderr)
+            self.meterless_model = DEFAULT_MODEL
 
     @property
     def live_mode(self):
@@ -85,6 +92,10 @@ def load_config(overrides=None):
     a request explicitly asks for sample mode or live mode).
     """
     overrides = overrides or {}
+    try:
+        request_timeout_s = float(os.getenv("REQUEST_TIMEOUT_S", "30"))
+    except (TypeError, ValueError):
+        request_timeout_s = 30.0
     cfg = AppConfig(
         sample_mode=_as_bool(os.getenv("SAMPLE_MODE"), True),
         meterless_base_url=os.getenv(
@@ -98,7 +109,7 @@ def load_config(overrides=None):
         zetaris_username=os.getenv("ZETARIS_USERNAME", ""),
         zetaris_password=os.getenv("ZETARIS_PASSWORD", ""),
         zetaris_enabled=_as_bool(os.getenv("ZETARIS_ENABLED"), True),
-        request_timeout_s=float(os.getenv("REQUEST_TIMEOUT_S", "30")),
+        request_timeout_s=request_timeout_s,
     )
     for key, value in overrides.items():
         if hasattr(cfg, key):

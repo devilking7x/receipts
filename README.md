@@ -144,6 +144,24 @@ pytest (tests). No LangGraph, no CrewAI, no GPU required. Any NVIDIA
 compute is reached through hosted or cloud access via the Nightshift
 Runtime; the app itself runs on CPU.
 
+## Data Sources and Models Used
+
+- **Live mode data:** Zetaris REST tables (`corp_financials_2025`,
+  `legal_filings`, `reputation_signals`, `court_dockets`) where they
+  exist; missing secondary tables degrade to empty results, while the
+  financial executor fails closed without Zetaris.
+- **Sample mode data:** synthetic fixtures in
+  `data_layer/sample_fixtures/` for three fictional vendors. Fixtures
+  hold raw records only — no score, tier, or verdict is stored; every
+  score is computed from the records at run time.
+- **No live web search** in this build; live reputation data comes
+  through Zetaris tables where available.
+- **Models used:** NVIDIA Nemotron, reached only through the
+  Nightshift Runtime lane in live mode (the exact model string
+  returned by the Runtime is logged; `meterless/auto` is never used
+  and no NVIDIA endpoint is ever called directly). In sample mode the
+  model step uses the labeled `sample-mock` provider, never Nemotron.
+
 ## Agent Roles
 
 | Agent | Job |
@@ -156,8 +174,10 @@ Runtime; the app itself runs on CPU.
 | WriterAgent | Deterministic scoring, report.md + report.json, Greenlight table |
 
 Every agent receives an injected `generate_fn(system_prompt,
-user_prompt, response_schema)`. In live mode that function calls the
-Nightshift Runtime; in sample mode it is a labeled mock (see the
+user_prompt, response_schema)`. In live mode Planner, Executors and
+Writer call the Nightshift Runtime through it, while the Evaluator
+applies deterministic rules instead, so verdicts are auditable rather
+than model-guessed. In sample mode it is a labeled mock (see the
 Live-vs-Cached Honesty section). Every call logs latency, tokens,
 model name and agent id to `logs/traces.jsonl`. Traces are runtime
 output only and are never hand-written.
