@@ -61,7 +61,7 @@ Requirements: Python 3.11+, Docker (optional, for the judge test).
 
 ```bash
 git clone <this repo>
-cd receipts-app
+cd receipts
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -200,8 +200,9 @@ from different fixture records each run.
 
 ## AI Disclosure
 
-This codebase was written with AI coding assistance (Muse, plus
-Cursor and GitHub Copilot as editing tools). The architecture,
+This codebase was written with AI coding assistance (Muse; the early
+scaffold was produced by the Cursor Agent). GitHub Copilot was
+considered but did not write code in this repo. The architecture,
 scoring formula, evaluator rules and fixture contents were designed
 by the builder; the AI produced the implementation files. Every
 generated file was verified by running it: the test suite, the
@@ -234,9 +235,9 @@ their own licenses). No product code was committed before the window.
 - Nothing in this repo replays a saved output: sample mode runs the
   full logic on cached records, and every output file in
   `output_examples/` was produced by executing the app.
-- The demo video (recorded separately) shows the live Intel run on
-  the builder laptop; any cached segment in that video is labeled on
-  screen as cached.
+- The demo video (to be recorded separately) will show the live Intel
+  run on the builder laptop; any cached segment in that video will be
+  labeled on screen as cached.
 
 ## Sponsor Tech
 
@@ -254,7 +255,7 @@ their own licenses). No product code was committed before the window.
   the Nightshift Runtime lane. No direct NVIDIA calls exist anywhere
   in this repo, and the value `meterless/auto` is never used because
   it may route to a non NVIDIA model.
-- **Cursor (development tool):** the scaffold and completion used
-  Cursor and GitHub Copilot. Per the 2026-10-22 HackOS onboarding
-  update, Cursor is optional and any AI coding tool is allowed; the
-  code is tool agnostic.
+- **Cursor (development tool):** the early scaffold was produced by the
+  Cursor Agent and the completion by Muse. Per the 2026-10-22 HackOS
+  onboarding update, Cursor is optional and any AI coding tool is
+  allowed; the code is tool agnostic.
