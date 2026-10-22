@@ -1,0 +1,61 @@
+{
+  "vendor_name": "Northwind Supply Co.",
+  "procurement_context": "Office supplies vendor onboarding, $40k annual contract",
+  "sample_mode": true,
+  "score": 14,
+  "tier": "LOW",
+  "recommendation": "PROCEED: no material red flags found; standard onboarding checks still apply.",
+  "breakdown": {
+    "financial": 5.4,
+    "legal": 0.0,
+    "contradiction": 0.0,
+    "reputation": 8.4
+  },
+  "claims": [
+    {
+      "claim_id": "northwind-supply-co-FIN-1",
+      "domain": "FINANCIAL",
+      "statement": "Northwind Supply Co. revenue grew 6.4 percent year over year.",
+      "severity": 3.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Zetaris corp_financials_2025, row revenue_yoy_pct"
+      ]
+    },
+    {
+      "claim_id": "northwind-supply-co-REP-1",
+      "domain": "REPUTATION",
+      "statement": "A small number of isolated customer complaints about delivery scheduling.",
+      "severity": 7.0,
+      "confidence": 1.0,
+      "state": "VERIFIED",
+      "citations": [
+        "Aggregated customer reviews"
+      ]
+    }
+  ],
+  "contradictions": [],
+  "red_flags": [],
+  "discarded_claims": [],
+  "path_to_greenlight": [],
+  "residual_score": 14,
+  "residual_tier": "LOW",
+  "citations": [
+    {
+      "claim_id": "northwind-supply-co-FIN-1",
+      "source_type": "ZETARIS_SQL",
+      "citation_locator": "Zetaris corp_financials_2025, row revenue_yoy_pct",
+      "excerpt": "Northwind Supply Co. revenue grew 6.4 percent year over year."
+    },
+    {
+      "claim_id": "northwind-supply-co-REP-1",
+      "source_type": "CUSTOMER_REVIEW",
+      "citation_locator": "Aggregated customer reviews",
+      "excerpt": "A small number of isolated customer complaints about delivery scheduling."
+    }
+  ],
+  "model": "sample-mock",
+  "trace_file": "logs/traces.jsonl",
+  "generated_at": "2026-10-22T12:54:00.321971Z"
+}

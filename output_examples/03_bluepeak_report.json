@@ -1,0 +1,119 @@
+{
+  "vendor_name": "Bluepeak Manufacturing",
+  "procurement_context": "Precision parts supplier onboarding, $500k annual contract",
+  "sample_mode": true,
+  "score": 39,
+  "tier": "MODERATE",
+  "recommendation": "PROCEED WITH CONDITIONS: apply the mitigations below and monitor the flagged areas through onboarding.",
+  "breakdown": {
+    "financial": 18.0,
+    "legal": 14.4,
+    "contradiction": 0.0,
+    "reputation": 6.48
+  },
+  "claims": [
+    {
+      "claim_id": "bluepeak-manufacturing-FIN-1",
+      "domain": "FINANCIAL",
+      "statement": "Bluepeak Manufacturing revenue fell 12.3 percent year over year.",
+      "severity": 6.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Zetaris corp_financials_2025, row revenue_yoy_pct"
+      ]
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-FIN-2",
+      "domain": "FINANCIAL",
+      "statement": "Bluepeak Manufacturing margins tightened by 3.1 percentage points.",
+      "severity": 4.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Zetaris corp_financials_2025, row margin_pressure_pct"
+      ]
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-LEG-1",
+      "domain": "LEGAL",
+      "statement": "Supply contract dispute filed against Bluepeak",
+      "severity": 8.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Filed court docket (primary source)"
+      ]
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-REP-1",
+      "domain": "REPUTATION",
+      "statement": "Mixed customer reviews: some praise product quality, others cite slow support responses.",
+      "severity": 6.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Aggregated customer reviews"
+      ]
+    }
+  ],
+  "contradictions": [],
+  "red_flags": [
+    {
+      "claim_id": "bluepeak-manufacturing-FIN-1",
+      "statement": "Bluepeak Manufacturing revenue fell 12.3 percent year over year.",
+      "severity": 6.0
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-LEG-1",
+      "statement": "Supply contract dispute filed against Bluepeak",
+      "severity": 8.0
+    }
+  ],
+  "discarded_claims": [],
+  "path_to_greenlight": [
+    {
+      "red_flag": "Bluepeak Manufacturing revenue fell 12.3 percent year over year.",
+      "mitigation": "Require audited financial statements and a $100k escrow",
+      "sla_clause": "Escrow + Right-to-Audit Clause",
+      "points_reduced": 15
+    },
+    {
+      "red_flag": "Supply contract dispute filed against Bluepeak",
+      "mitigation": "Obtain an independent legal opinion and a full indemnity",
+      "sla_clause": "Indemnity + Termination-for-Cause Clause",
+      "points_reduced": 15
+    }
+  ],
+  "residual_score": 9,
+  "residual_tier": "LOW",
+  "citations": [
+    {
+      "claim_id": "bluepeak-manufacturing-FIN-1",
+      "source_type": "ZETARIS_SQL",
+      "citation_locator": "Zetaris corp_financials_2025, row revenue_yoy_pct",
+      "excerpt": "Bluepeak Manufacturing revenue fell 12.3 percent year over year."
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-FIN-2",
+      "source_type": "ZETARIS_SQL",
+      "citation_locator": "Zetaris corp_financials_2025, row margin_pressure_pct",
+      "excerpt": "Bluepeak Manufacturing margins tightened by 3.1 percentage points."
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-LEG-1",
+      "source_type": "COURT_DOCKET",
+      "citation_locator": "Filed court docket (primary source)",
+      "excerpt": "A filed court docket records a supply contract dispute involving Bluepeak Manufacturing."
+    },
+    {
+      "claim_id": "bluepeak-manufacturing-REP-1",
+      "source_type": "CUSTOMER_REVIEW",
+      "citation_locator": "Aggregated customer reviews",
+      "excerpt": "Mixed customer reviews: some praise product quality, others cite slow support responses."
+    }
+  ],
+  "model": "sample-mock",
+  "trace_file": "logs/traces.jsonl",
+  "generated_at": "2026-10-22T12:54:00.654856Z"
+}

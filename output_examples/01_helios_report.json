@@ -1,0 +1,160 @@
+{
+  "vendor_name": "Helios Semiconductor",
+  "procurement_context": "Semiconductor component supplier onboarding, $2M annual contract",
+  "sample_mode": true,
+  "score": 76,
+  "tier": "HIGH",
+  "recommendation": "DO NOT PROCEED as-is: resolve the red flags below or apply the Path to Greenlight mitigations before signing.",
+  "breakdown": {
+    "financial": 27.55,
+    "legal": 17.1,
+    "contradiction": 25.0,
+    "reputation": 6.48
+  },
+  "claims": [
+    {
+      "claim_id": "helios-semiconductor-FIN-1",
+      "domain": "FINANCIAL",
+      "statement": "Helios Semiconductor revenue fell 41.8 percent year over year.",
+      "severity": 8.0,
+      "confidence": 0.95,
+      "state": "VERIFIED",
+      "citations": [
+        "Zetaris corp_financials_2025, row revenue_yoy_pct"
+      ]
+    },
+    {
+      "claim_id": "helios-semiconductor-FIN-2",
+      "domain": "FINANCIAL",
+      "statement": "Helios Semiconductor cash flow is negative at minus 4.2 million dollars.",
+      "severity": 6.5,
+      "confidence": 0.95,
+      "state": "VERIFIED",
+      "citations": [
+        "Zetaris corp_financials_2025, row cash_flow_usd_m"
+      ]
+    },
+    {
+      "claim_id": "helios-semiconductor-LEG-1",
+      "domain": "LEGAL",
+      "statement": "Blog rumor of a counterfeit components lawsuit against Helios",
+      "severity": 9.0,
+      "confidence": 0.95,
+      "state": "VERIFIED",
+      "citations": [
+        "Industry blog report (secondary source)",
+        "Delaware Docket #2025-CV-04912"
+      ]
+    },
+    {
+      "claim_id": "helios-semiconductor-REP-2",
+      "domain": "REPUTATION",
+      "statement": "Multiple customers report late deliveries and defective batches from Helios.",
+      "severity": 6.0,
+      "confidence": 0.9,
+      "state": "VERIFIED",
+      "citations": [
+        "Aggregated customer reviews"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "source_claim_id": "helios-semiconductor-REP-1",
+      "target_claim_id": "helios-semiconductor-FIN-1",
+      "reason": "PR claims growth while Zetaris shows revenue decline of -41.8 percent"
+    }
+  ],
+  "red_flags": [
+    {
+      "claim_id": "helios-semiconductor-FIN-1",
+      "statement": "Helios Semiconductor revenue fell 41.8 percent year over year.",
+      "severity": 8.0
+    },
+    {
+      "claim_id": "helios-semiconductor-FIN-2",
+      "statement": "Helios Semiconductor cash flow is negative at minus 4.2 million dollars.",
+      "severity": 6.5
+    },
+    {
+      "claim_id": "helios-semiconductor-LEG-1",
+      "statement": "Blog rumor of a counterfeit components lawsuit against Helios",
+      "severity": 9.0
+    }
+  ],
+  "discarded_claims": [
+    {
+      "claim_id": "helios-semiconductor-LEG-2",
+      "statement": "Blog rumor that the Helios chief executive was arrested",
+      "retry_count": 2
+    },
+    {
+      "claim_id": "helios-semiconductor-REP-1",
+      "statement": "Helios company press release: Record 30 percent growth this quarter.",
+      "retry_count": 0
+    }
+  ],
+  "path_to_greenlight": [
+    {
+      "red_flag": "Helios Semiconductor revenue fell 41.8 percent year over year.",
+      "mitigation": "Require audited financial statements and a $100k escrow",
+      "sla_clause": "Escrow + Right-to-Audit Clause",
+      "points_reduced": 15
+    },
+    {
+      "red_flag": "Helios Semiconductor cash flow is negative at minus 4.2 million dollars.",
+      "mitigation": "Require a bank guarantee and milestone based payments",
+      "sla_clause": "Payment-on-Delivery Clause",
+      "points_reduced": 12
+    },
+    {
+      "red_flag": "Blog rumor of a counterfeit components lawsuit against Helios",
+      "mitigation": "Obtain an independent legal opinion and a full indemnity",
+      "sla_clause": "Indemnity + Termination-for-Cause Clause",
+      "points_reduced": 15
+    },
+    {
+      "red_flag": "Company PR contradicts Zetaris data (PR claims growth while Zetaris shows revenue decline of -41.8 percent)",
+      "mitigation": "Require independent third party verification and a disclosure warranty",
+      "sla_clause": "Disclosure Warranty Clause",
+      "points_reduced": 10
+    }
+  ],
+  "residual_score": 24,
+  "residual_tier": "LOW",
+  "citations": [
+    {
+      "claim_id": "helios-semiconductor-FIN-1",
+      "source_type": "ZETARIS_SQL",
+      "citation_locator": "Zetaris corp_financials_2025, row revenue_yoy_pct",
+      "excerpt": "Helios Semiconductor revenue fell 41.8 percent year over year."
+    },
+    {
+      "claim_id": "helios-semiconductor-FIN-2",
+      "source_type": "ZETARIS_SQL",
+      "citation_locator": "Zetaris corp_financials_2025, row cash_flow_usd_m",
+      "excerpt": "Helios Semiconductor cash flow is negative at minus 4.2 million dollars."
+    },
+    {
+      "claim_id": "helios-semiconductor-LEG-1",
+      "source_type": "NEWS_ARTICLE",
+      "citation_locator": "Industry blog report (secondary source)",
+      "excerpt": "An industry blog alleges Helios Semiconductor faces a lawsuit over counterfeit components."
+    },
+    {
+      "claim_id": "helios-semiconductor-LEG-1",
+      "source_type": "COURT_DOCKET",
+      "citation_locator": "Delaware Docket #2025-CV-04912",
+      "excerpt": "Delaware Court of Chancery docket #2025-CV-04912 records a counterfeit components claim against Helios Semiconductor."
+    },
+    {
+      "claim_id": "helios-semiconductor-REP-2",
+      "source_type": "CUSTOMER_REVIEW",
+      "citation_locator": "Aggregated customer reviews",
+      "excerpt": "Multiple customers report late deliveries and defective batches from Helios."
+    }
+  ],
+  "model": "sample-mock",
+  "trace_file": "logs/traces.jsonl",
+  "generated_at": "2026-10-22T12:53:59.912438Z"
+}
