@@ -110,7 +110,9 @@ def orchestrate(vendor_name, procurement_context="", config=None,
                 model = used
                 break
         else:
-            model = config.meterless_model
+            # No live model responded (every call fell back): report
+            # the honest mock label, never claim the Nemotron string.
+            model = "sample-mock"
     writer = WriterAgent()
     markdown, report_data = writer.write(
         world, procurement_context, config.sample_mode, model, trace_path,
