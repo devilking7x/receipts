@@ -88,13 +88,28 @@ class SearchClient:
                     return record
             return None
         # Live mode: a docket lookup through Zetaris, best effort.
+        # Same matching rule as sample mode: a primary record only
+        # verifies the claim when its text shares keywords with the
+        # claim (excluding vendor words), so an unrelated docket can
+        # never verify an unrelated rumor.
         try:
             rows = self.zetaris_client.query(
                 "SELECT * FROM court_dockets WHERE vendor = '%s'"
                 % vendor_name.replace("'", "''"))
         except ZetarisDataLayerUnavailableError:
             return None
+        vendor_words = set(re.findall(r"[a-z0-9]+",
+                                      vendor_name.lower()))
+        want = _keywords(claim.statement) - vendor_words
+        if not want:
+            return None
         for row in rows:
-            if isinstance(row, dict) and row.get("is_primary_source"):
+            if not isinstance(row, dict):
+                continue
+            if not row.get("is_primary_source"):
+                continue
+            hay = _keywords(" ".join(
+                str(v) for v in row.values())) - vendor_words
+            if want & hay:
                 return row
         return None

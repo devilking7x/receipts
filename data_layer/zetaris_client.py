@@ -73,6 +73,8 @@ class ZetarisClient:
         except Exception as exc:
             raise ZetarisDataLayerUnavailableError(
                 "Zetaris REST request failed: %s" % exc) from exc
+        if isinstance(payload, list):
+            return payload
         if isinstance(payload, dict):
             for key in ("data", "rows", "result", "records"):
                 rows = payload.get(key)
