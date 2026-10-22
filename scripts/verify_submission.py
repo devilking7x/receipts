@@ -11,7 +11,7 @@ Checks, in order:
    environment names themselves contain those words.
 5. Dockerfile defaults to SAMPLE_MODE=true.
 6. metadata.json is valid and declares sample mode support.
-7. README contains the nine required sections.
+7. README contains all required sections.
 
 Exit code 0 means every hard check passed.
 """
@@ -49,7 +49,7 @@ REQUIRED_FILES = [
 README_SECTIONS = [
     "setup", "usage", "dependencies", "agent roles", "examples",
     "limitations", "ai disclosure", "pre-existing",
-    "live-vs-cached",
+    "live-vs-cached", "data sources", "models used",
 ]
 
 # Patterns that indicate a real secret VALUE, not a word.
@@ -164,7 +164,7 @@ def main():
     with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
         readme = fh.read().lower()
     missing_sections = [s for s in README_SECTIONS if s not in readme]
-    check("README has all nine required sections", not missing_sections,
+    check("README has all required sections", not missing_sections,
           "(missing: %s)" % missing_sections if missing_sections else "")
 
     for info in infos:
