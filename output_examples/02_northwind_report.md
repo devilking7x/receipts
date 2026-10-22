@@ -31,14 +31,14 @@ Scores are computed from VERIFIED claims only. Discarded claims contribute zero.
 ```mermaid
 flowchart TD
     V[Northwind Supply Co.]
-    northwind-supply-co-FIN-1["northwind-supply-co-FIN-1<br/>FINANCIAL 3.0 conf 0.90<br/>VERIFIED"]
-    V --> northwind-supply-co-FIN-1
-    northwind-supply-co-REP-1["northwind-supply-co-REP-1<br/>REPUTATION 7.0 conf 1.00<br/>VERIFIED"]
-    V --> northwind-supply-co-REP-1
-    northwind-supply-co-FIN-1-EV1["northwind-supply-co-FIN-1-EV1<br/>ZETARIS_SQL"]
-    northwind-supply-co-FIN-1-EV1 --> northwind-supply-co-FIN-1
-    northwind-supply-co-REP-1-EV1["northwind-supply-co-REP-1-EV1<br/>CUSTOMER_REVIEW"]
-    northwind-supply-co-REP-1-EV1 --> northwind-supply-co-REP-1
+    northwind_supply_co_FIN_1["northwind-supply-co-FIN-1<br/>FINANCIAL 3.0 conf 0.90<br/>VERIFIED"]
+    V --> northwind_supply_co_FIN_1
+    northwind_supply_co_REP_1["northwind-supply-co-REP-1<br/>REPUTATION 7.0 conf 1.00<br/>VERIFIED"]
+    V --> northwind_supply_co_REP_1
+    northwind_supply_co_FIN_1_EV1["northwind-supply-co-FIN-1-EV1<br/>ZETARIS_SQL"]
+    northwind_supply_co_FIN_1_EV1 --> northwind_supply_co_FIN_1
+    northwind_supply_co_REP_1_EV1["northwind-supply-co-REP-1-EV1<br/>CUSTOMER_REVIEW"]
+    northwind_supply_co_REP_1_EV1 --> northwind_supply_co_REP_1
 ```
 
 ## Verified Findings
@@ -71,6 +71,6 @@ These claims were challenged by the Evaluator and discarded after retries. They 
 - Model / provider: sample-mock
 - Sample mode: True
 - Trace file: logs/traces.jsonl
-- Generated at: 2026-10-22T12:54:00.321971Z
+- Generated at: 2026-10-22T13:20:26.372687Z
 - Agents: PlannerAgent, FinancialExecutor, LegalExecutor, ReputationExecutor, EvaluatorAgent, WriterAgent
 - Engines: World Model (evidence graph), Markovian (claim lifecycle)

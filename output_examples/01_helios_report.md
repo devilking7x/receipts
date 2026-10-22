@@ -33,33 +33,33 @@ Scores are computed from VERIFIED claims only. Discarded claims contribute zero.
 ```mermaid
 flowchart TD
     V[Helios Semiconductor]
-    helios-semiconductor-FIN-1["helios-semiconductor-FIN-1<br/>FINANCIAL 8.0 conf 0.95<br/>VERIFIED"]
-    V --> helios-semiconductor-FIN-1
-    helios-semiconductor-FIN-2["helios-semiconductor-FIN-2<br/>FINANCIAL 6.5 conf 0.95<br/>VERIFIED"]
-    V --> helios-semiconductor-FIN-2
-    helios-semiconductor-LEG-1["helios-semiconductor-LEG-1<br/>LEGAL 9.0 conf 0.95<br/>VERIFIED"]
-    V --> helios-semiconductor-LEG-1
-    helios-semiconductor-LEG-2["helios-semiconductor-LEG-2<br/>LEGAL 8.5 conf 0.50<br/>DISCARDED"]
-    V --> helios-semiconductor-LEG-2
-    helios-semiconductor-REP-1["helios-semiconductor-REP-1<br/>REPUTATION 5.0 conf 0.90<br/>DISCARDED"]
-    V --> helios-semiconductor-REP-1
-    helios-semiconductor-REP-2["helios-semiconductor-REP-2<br/>REPUTATION 6.0 conf 0.90<br/>VERIFIED"]
-    V --> helios-semiconductor-REP-2
-    helios-semiconductor-FIN-1-EV1["helios-semiconductor-FIN-1-EV1<br/>ZETARIS_SQL"]
-    helios-semiconductor-FIN-1-EV1 --> helios-semiconductor-FIN-1
-    helios-semiconductor-FIN-2-EV1["helios-semiconductor-FIN-2-EV1<br/>ZETARIS_SQL"]
-    helios-semiconductor-FIN-2-EV1 --> helios-semiconductor-FIN-2
-    helios-semiconductor-LEG-1-EV1["helios-semiconductor-LEG-1-EV1<br/>NEWS_ARTICLE"]
-    helios-semiconductor-LEG-1-EV1 --> helios-semiconductor-LEG-1
-    helios-semiconductor-LEG-2-EV1["helios-semiconductor-LEG-2-EV1<br/>NEWS_ARTICLE"]
-    helios-semiconductor-LEG-2-EV1 --> helios-semiconductor-LEG-2
-    helios-semiconductor-REP-1-EV1["helios-semiconductor-REP-1-EV1<br/>COMPANY_PR"]
-    helios-semiconductor-REP-1-EV1 --> helios-semiconductor-REP-1
-    helios-semiconductor-REP-2-EV1["helios-semiconductor-REP-2-EV1<br/>CUSTOMER_REVIEW"]
-    helios-semiconductor-REP-2-EV1 --> helios-semiconductor-REP-2
-    helios-semiconductor-LEG-1-EV-PRIMARY["helios-semiconductor-LEG-1-EV-PRIMARY<br/>COURT_DOCKET"]
-    helios-semiconductor-LEG-1-EV-PRIMARY --> helios-semiconductor-LEG-1
-    helios-semiconductor-REP-1 -.->|contradicts| helios-semiconductor-FIN-1
+    helios_semiconductor_FIN_1["helios-semiconductor-FIN-1<br/>FINANCIAL 8.0 conf 0.95<br/>VERIFIED"]
+    V --> helios_semiconductor_FIN_1
+    helios_semiconductor_FIN_2["helios-semiconductor-FIN-2<br/>FINANCIAL 6.5 conf 0.95<br/>VERIFIED"]
+    V --> helios_semiconductor_FIN_2
+    helios_semiconductor_LEG_1["helios-semiconductor-LEG-1<br/>LEGAL 9.0 conf 0.95<br/>VERIFIED"]
+    V --> helios_semiconductor_LEG_1
+    helios_semiconductor_LEG_2["helios-semiconductor-LEG-2<br/>LEGAL 8.5 conf 0.50<br/>DISCARDED"]
+    V --> helios_semiconductor_LEG_2
+    helios_semiconductor_REP_1["helios-semiconductor-REP-1<br/>REPUTATION 5.0 conf 0.90<br/>DISCARDED"]
+    V --> helios_semiconductor_REP_1
+    helios_semiconductor_REP_2["helios-semiconductor-REP-2<br/>REPUTATION 6.0 conf 0.90<br/>VERIFIED"]
+    V --> helios_semiconductor_REP_2
+    helios_semiconductor_FIN_1_EV1["helios-semiconductor-FIN-1-EV1<br/>ZETARIS_SQL"]
+    helios_semiconductor_FIN_1_EV1 --> helios_semiconductor_FIN_1
+    helios_semiconductor_FIN_2_EV1["helios-semiconductor-FIN-2-EV1<br/>ZETARIS_SQL"]
+    helios_semiconductor_FIN_2_EV1 --> helios_semiconductor_FIN_2
+    helios_semiconductor_LEG_1_EV1["helios-semiconductor-LEG-1-EV1<br/>NEWS_ARTICLE"]
+    helios_semiconductor_LEG_1_EV1 --> helios_semiconductor_LEG_1
+    helios_semiconductor_LEG_2_EV1["helios-semiconductor-LEG-2-EV1<br/>NEWS_ARTICLE"]
+    helios_semiconductor_LEG_2_EV1 --> helios_semiconductor_LEG_2
+    helios_semiconductor_REP_1_EV1["helios-semiconductor-REP-1-EV1<br/>COMPANY_PR"]
+    helios_semiconductor_REP_1_EV1 --> helios_semiconductor_REP_1
+    helios_semiconductor_REP_2_EV1["helios-semiconductor-REP-2-EV1<br/>CUSTOMER_REVIEW"]
+    helios_semiconductor_REP_2_EV1 --> helios_semiconductor_REP_2
+    helios_semiconductor_LEG_1_EV_PRIMARY["helios-semiconductor-LEG-1-EV-PRIMARY<br/>COURT_DOCKET"]
+    helios_semiconductor_LEG_1_EV_PRIMARY --> helios_semiconductor_LEG_1
+    helios_semiconductor_REP_1 -.->|contradicts| helios_semiconductor_FIN_1
 ```
 
 ## Verified Findings
@@ -103,6 +103,6 @@ These claims were challenged by the Evaluator and discarded after retries. They 
 - Model / provider: sample-mock
 - Sample mode: True
 - Trace file: logs/traces.jsonl
-- Generated at: 2026-10-22T12:53:59.912438Z
+- Generated at: 2026-10-22T13:20:26.068052Z
 - Agents: PlannerAgent, FinancialExecutor, LegalExecutor, ReputationExecutor, EvaluatorAgent, WriterAgent
 - Engines: World Model (evidence graph), Markovian (claim lifecycle)

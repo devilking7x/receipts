@@ -33,22 +33,22 @@ Scores are computed from VERIFIED claims only. Discarded claims contribute zero.
 ```mermaid
 flowchart TD
     V[Bluepeak Manufacturing]
-    bluepeak-manufacturing-FIN-1["bluepeak-manufacturing-FIN-1<br/>FINANCIAL 6.0 conf 0.90<br/>VERIFIED"]
-    V --> bluepeak-manufacturing-FIN-1
-    bluepeak-manufacturing-FIN-2["bluepeak-manufacturing-FIN-2<br/>FINANCIAL 4.0 conf 0.90<br/>VERIFIED"]
-    V --> bluepeak-manufacturing-FIN-2
-    bluepeak-manufacturing-LEG-1["bluepeak-manufacturing-LEG-1<br/>LEGAL 8.0 conf 0.90<br/>VERIFIED"]
-    V --> bluepeak-manufacturing-LEG-1
-    bluepeak-manufacturing-REP-1["bluepeak-manufacturing-REP-1<br/>REPUTATION 6.0 conf 0.90<br/>VERIFIED"]
-    V --> bluepeak-manufacturing-REP-1
-    bluepeak-manufacturing-FIN-1-EV1["bluepeak-manufacturing-FIN-1-EV1<br/>ZETARIS_SQL"]
-    bluepeak-manufacturing-FIN-1-EV1 --> bluepeak-manufacturing-FIN-1
-    bluepeak-manufacturing-FIN-2-EV1["bluepeak-manufacturing-FIN-2-EV1<br/>ZETARIS_SQL"]
-    bluepeak-manufacturing-FIN-2-EV1 --> bluepeak-manufacturing-FIN-2
-    bluepeak-manufacturing-LEG-1-EV1["bluepeak-manufacturing-LEG-1-EV1<br/>COURT_DOCKET"]
-    bluepeak-manufacturing-LEG-1-EV1 --> bluepeak-manufacturing-LEG-1
-    bluepeak-manufacturing-REP-1-EV1["bluepeak-manufacturing-REP-1-EV1<br/>CUSTOMER_REVIEW"]
-    bluepeak-manufacturing-REP-1-EV1 --> bluepeak-manufacturing-REP-1
+    bluepeak_manufacturing_FIN_1["bluepeak-manufacturing-FIN-1<br/>FINANCIAL 6.0 conf 0.90<br/>VERIFIED"]
+    V --> bluepeak_manufacturing_FIN_1
+    bluepeak_manufacturing_FIN_2["bluepeak-manufacturing-FIN-2<br/>FINANCIAL 4.0 conf 0.90<br/>VERIFIED"]
+    V --> bluepeak_manufacturing_FIN_2
+    bluepeak_manufacturing_LEG_1["bluepeak-manufacturing-LEG-1<br/>LEGAL 8.0 conf 0.90<br/>VERIFIED"]
+    V --> bluepeak_manufacturing_LEG_1
+    bluepeak_manufacturing_REP_1["bluepeak-manufacturing-REP-1<br/>REPUTATION 6.0 conf 0.90<br/>VERIFIED"]
+    V --> bluepeak_manufacturing_REP_1
+    bluepeak_manufacturing_FIN_1_EV1["bluepeak-manufacturing-FIN-1-EV1<br/>ZETARIS_SQL"]
+    bluepeak_manufacturing_FIN_1_EV1 --> bluepeak_manufacturing_FIN_1
+    bluepeak_manufacturing_FIN_2_EV1["bluepeak-manufacturing-FIN-2-EV1<br/>ZETARIS_SQL"]
+    bluepeak_manufacturing_FIN_2_EV1 --> bluepeak_manufacturing_FIN_2
+    bluepeak_manufacturing_LEG_1_EV1["bluepeak-manufacturing-LEG-1-EV1<br/>COURT_DOCKET"]
+    bluepeak_manufacturing_LEG_1_EV1 --> bluepeak_manufacturing_LEG_1
+    bluepeak_manufacturing_REP_1_EV1["bluepeak-manufacturing-REP-1-EV1<br/>CUSTOMER_REVIEW"]
+    bluepeak_manufacturing_REP_1_EV1 --> bluepeak_manufacturing_REP_1
 ```
 
 ## Verified Findings
@@ -87,6 +87,6 @@ These claims were challenged by the Evaluator and discarded after retries. They 
 - Model / provider: sample-mock
 - Sample mode: True
 - Trace file: logs/traces.jsonl
-- Generated at: 2026-10-22T12:54:00.654856Z
+- Generated at: 2026-10-22T13:20:26.680439Z
 - Agents: PlannerAgent, FinancialExecutor, LegalExecutor, ReputationExecutor, EvaluatorAgent, WriterAgent
 - Engines: World Model (evidence graph), Markovian (claim lifecycle)
