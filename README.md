@@ -10,11 +10,34 @@ reputation — every claim cited, every score computed with transparent
 math, and a "Path to Greenlight" table that says exactly what would
 have to change for the vendor to become acceptable.
 
+A bad signing puts real value at stake: the contract value itself,
+plus legal exposure if the supplier faces litigation or fails
+compliance, plus reputation damage if a supplier's misconduct becomes
+the buyer's problem. Receipts exists so that decision is made on
+cited evidence, not on a sales deck.
+
 ## Architecture
 
 ```
 Planner -> 3 parallel Executors -> Adversarial Evaluator -> Writer
               (asyncio.gather)         (Markovian critique loop)
+```
+
+```mermaid
+flowchart LR
+    P[PlannerAgent] --> F[FinancialExecutor]
+    P --> L[LegalExecutor]
+    P --> R[ReputationExecutor]
+    F --> E[Adversarial Evaluator]
+    L --> E
+    R --> E
+    E --> W[WriterAgent]
+    W --> REP[report.md + report.json]
+    WM[World Model engine] -. evidence graph .-> F
+    WM -. evidence graph .-> L
+    WM -. evidence graph .-> R
+    WM -. evidence graph .-> E
+    MK[Markovian engine] -. claim lifecycle .-> E
 ```
 
 - **PlannerAgent** splits the investigation into FINANCIAL_TASK,
@@ -99,6 +122,12 @@ python run.py --vendor "Helios Semiconductor" --sample-mode
 python run.py --vendor "Northwind Supply Co." --sample-mode
 python run.py --vendor "Bluepeak Manufacturing" --sample-mode
 ```
+
+Measured sample-mode timings (single run each, measured on this Linux
+VM with `time.perf_counter`): Helios Semiconductor 0.43s, Northwind
+Supply Co. 0.32s, Bluepeak Manufacturing 0.31s. Timings vary by
+machine; live-mode runs depend on Nightshift + Zetaris latency and
+are not quoted here.
 
 CLI (live mode, needs a real `.env`):
 
