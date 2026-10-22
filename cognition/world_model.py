@@ -117,7 +117,18 @@ class WorldModel:
         return [e for e in self.edges if e.edge_type == "CONTRADICTS"]
 
     def to_mermaid(self):
-        """Render the graph as a Mermaid flowchart for report.md."""
+        """Render the graph as a Mermaid flowchart for report.md.
+
+        Node identifiers are sanitized to [A-Za-z0-9_]: raw claim and
+        evidence ids contain hyphens, which Mermaid parses as edge
+        syntax and which break GitHub rendering. Labels keep the full
+        original ids; only the identifiers are sanitized.
+        """
+        import re
+
+        def node_id(raw):
+            return re.sub(r"[^A-Za-z0-9_]", "_", str(raw))
+
         lines = ["```mermaid", "flowchart TD"]
         vendor_node = "V[%s]" % self.vendor_name
         lines.append("    %s" % vendor_node)
@@ -125,22 +136,24 @@ class WorldModel:
             label = "%s<br/>%s %.1f conf %.2f<br/>%s" % (
                 claim.claim_id, claim.domain, claim.severity,
                 claim.confidence, claim.state.value)
-            lines.append('    %s["%s"]' % (claim.claim_id, label))
+            lines.append('    %s["%s"]' % (node_id(claim.claim_id), label))
             lines.append("    %s --> %s" % (vendor_node.split("[")[0],
-                                            claim.claim_id))
+                                            node_id(claim.claim_id)))
         for evidence in self.evidence.values():
             label = "%s<br/>%s" % (evidence.evidence_id,
                                    evidence.source_type)
-            lines.append('    %s["%s"]' % (evidence.evidence_id, label))
+            lines.append('    %s["%s"]' % (node_id(evidence.evidence_id),
+                                           label))
             if evidence.claim_id:
-                lines.append("    %s --> %s" % (evidence.evidence_id,
-                                                evidence.claim_id))
+                lines.append("    %s --> %s" % (
+                    node_id(evidence.evidence_id),
+                    node_id(evidence.claim_id)))
         for edge in self.edges:
             if edge.edge_type == "CONTRADICTS":
                 lines.append("    %s -.->|contradicts| %s" % (
-                    edge.source_id, edge.target_id))
+                    node_id(edge.source_id), node_id(edge.target_id)))
             elif edge.edge_type == "DERIVED_FROM":
                 lines.append("    %s -.->|derived from| %s" % (
-                    edge.source_id, edge.target_id))
+                    node_id(edge.source_id), node_id(edge.target_id)))
         lines.append("```")
         return "\n".join(lines)

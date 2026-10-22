@@ -149,17 +149,21 @@ def create_injected_generator(config, tracer, agent_id):
                     "latency_ms": latency_ms, "tokens": tokens,
                     "provider_fallback": False}
         except Exception as exc:  # degrade, never crash
+            # Honesty rule: the fallback text is mock-generated, so the
+            # trace must NOT claim the Nemotron model string for it.
+            # status="provider_fallback" plus this label make it clear
+            # no live model responded.
             text = _mock_response(system_prompt, user_prompt)
             latency_ms = round((time.perf_counter() - started) * 1000, 2)
             tracer.log(
                 step="generate", agent=agent_id, engine="generator",
-                model=config.meterless_model, event_type="llm_call",
+                model="sample-mock", event_type="llm_call",
                 action="nightshift_generate",
                 input_summary=user_prompt[:160],
                 output_summary="provider fallback: %s" % str(exc)[:120],
                 status="provider_fallback", latency_ms=latency_ms,
                 tokens=None)
-            return {"text": text, "model": config.meterless_model,
+            return {"text": text, "model": "sample-mock",
                     "latency_ms": latency_ms, "tokens": None,
                     "provider_fallback": True}
 
