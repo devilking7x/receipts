@@ -96,8 +96,10 @@ class ZetarisClient:
             if rows is None:
                 return []
             return rows
+        # Zetaris resolves tables only as <container>.<view>; the live
+        # tables live in the `receipts` schemastore container.
         sql = (
-            "SELECT f.* FROM corp_financials_2025 f "
-            "JOIN entity_metadata e ON f.vendor = e.vendor "
+            "SELECT f.* FROM receipts.corp_financials_2025 f "
+            "JOIN receipts.entity_metadata e ON f.vendor = e.vendor "
             "WHERE f.vendor = '%s'" % vendor_name.replace("'", "''"))
         return self.query(sql)
