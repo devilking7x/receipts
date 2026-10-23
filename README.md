@@ -145,6 +145,22 @@ curl -X POST http://localhost:8000/run \
   -d @input_examples/01_helios.json
 ```
 
+Web UI (same server, no build step):
+
+Open http://localhost:8000 in a browser — the investigation UI is
+served from the same FastAPI app (also at `/ui`). Type a vendor name
+and procurement context, pick Auto / Sample / Live, and press
+Investigate vendor. The page shows the score ring, tier,
+recommendation, score breakdown, red flags, contradictions, verified
+claims with citations, the Path to Greenlight table, residual score,
+and discarded claims — every number from a live POST /run call, never
+hardcoded. The UI is one self-contained HTML file
+(`app/static/index.html`, no CDN, no web fonts), so it works offline
+inside the judge Docker image. In sample mode the banner reads
+"cached fixture data"; in live mode it reads "Nightshift + Zetaris".
+For the demo video's live segment, select Live mode and investigate
+Intel Corporation.
+
 Docker judge test:
 
 ```bash
