@@ -1,8 +1,11 @@
-"""FastAPI compliance layer: programmatic access for judges.
+"""FastAPI compliance layer: programmatic access for judges, plus the
+investigation UI for the demo video.
 
+- GET / and GET /ui: the Receipts web UI (single self-contained HTML
+  file, no CDN, no external assets — it works offline in Docker).
 - GET /health: liveness plus the active mode.
 - POST /run: JSON in, structured report JSON out. No interactive
-  input, no UI needed. Failures return a useful message, never a
+  input needed. Failures return a useful message, never a
   stack trace and never a hang.
 
 Example judge test:
@@ -13,10 +16,11 @@ Example judge test:
 
 import asyncio
 import os
+from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
 from agents.pipeline import VendorNotFoundError, orchestrate
@@ -25,11 +29,19 @@ from data_layer.zetaris_client import ZetarisDataLayerUnavailableError
 
 app = FastAPI(title="Receipts", version="1.0.0")
 
+UI_FILE = Path(__file__).parent / "static" / "index.html"
+
 
 class RunRequest(BaseModel):
     vendor_name: str
     procurement_context: str = ""
     sample_mode: Optional[bool] = None
+
+
+@app.get("/", include_in_schema=False)
+@app.get("/ui", include_in_schema=False)
+def ui():
+    return FileResponse(UI_FILE, media_type="text/html")
 
 
 @app.get("/health")
