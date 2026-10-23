@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receipts — Procurement Due-Diligence Investigator</title>
+<!--
+  Receipts web UI (Track 2: "The Agent That Can Explain Why").
+  Fully self-contained: no CDN, no web fonts, no external assets, so it
+  works offline inside the judge Docker image. Every number on this page
+  comes from a live POST /run call — nothing here is hardcoded.
+  In sample mode the API runs on cached fixtures (Helios, Northwind,
+  Bluepeak); in live mode it runs against Nightshift + Zetaris.
+-->
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --text: #000000;
+    --text2: #3c3c43;
+    --text3: #8a8a8e;
+    --sep: #e5e5ea;
+    --blue: #007aff;
+    --blue-dark: #005ecb;
+    --green: #34c759;
+    --orange: #ff9500;
+    --red: #ff3b30;
+    --purple: #af52de;
+    --teal: #5ac8fa;
+    --amber-bg: #fff8e6;
+    --red-bg: #fff0ef;
+    --green-bg: #edf9ee;
+    --radius: 22px;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 12px 32px rgba(16, 24, 40, .08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }
+  header { margin: 8px 4px 24px; }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .subtitle { color: var(--text2); font-size: 17px; margin: 0; }
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-top: 12px;
+  }
+  .badge-sample { background: #e8f0fe; color: #1c4ed8; }
+  .badge-live { background: var(--green-bg); color: #1d7a2e; }
+  .badge-off { background: var(--red-bg); color: #b91c1c; }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+    animation: rise .35s ease both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 0 0 8px 4px;
+  }
+  input[type="text"] {
+    width: 100%;
+    font: inherit;
+    padding: 14px 16px;
+    border: 1px solid var(--sep);
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 18px;
+  }
+  input[type="text"]:focus { border-color: var(--blue); background: #fff; }
+  .seg {
+    display: inline-flex;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 18px;
+  }
+  .seg button {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    border: 0;
+    border-radius: 9px;
+    padding: 8px 18px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+  }
+  .seg button.on { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .chip {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--sep);
+    background: #fff;
+    color: var(--blue);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--blue); }
+  .run-btn {
+    width: 100%;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--blue);
+    border: 0;
+    border-radius: 14px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .run-btn:hover { background: var(--blue-dark); }
+  .run-btn:disabled { background: #a0c8ff; cursor: wait; }
+  .hint { color: var(--text3); font-size: 14px; margin: 12px 4px 0; }
+  .status { text-align: center; color: var(--text2); font-size: 15px; padding: 6px 0 2px; min-height: 24px; }
+  .error {
+    background: var(--red-bg);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .hero { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .ring {
+    width: 132px; height: 132px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ring b { font-size: 38px; letter-spacing: -0.02em; line-height: 1; }
+  .ring span { font-size: 13px; color: var(--text3); font-weight: 600; }
+  .tier {
+    display: inline-block;
+    font-size: 15px; font-weight: 700;
+    color: #fff; border-radius: 999px; padding: 5px 16px;
+  }
+  .tier-LOW { background: var(--green); }
+  .tier-MODERATE { background: var(--orange); }
+  .tier-HIGH { background: var(--red); }
+  .rec { font-size: 18px; font-weight: 600; margin: 10px 0 4px; }
+  .vendor-line { color: var(--text2); font-size: 15px; margin: 0; }
+  .banner {
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .banner-sample { background: #e8f0fe; color: #1c4ed8; }
+  .banner-live { background: var(--green-bg); color: #1d7a2e; }
+  h2 { font-size: 20px; letter-spacing: -0.01em; margin: 0 0 14px; }
+  .brow { margin-bottom: 12px; }
+  .brow .top { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 6px; }
+  .brow .top b { font-weight: 600; }
+  .brow .top span { color: var(--text3); font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; transition: width .6s ease; }
+  .flag {
+    background: var(--amber-bg);
+    border-radius: 14px;
+    padding: 13px 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  .flag b { color: #92400e; }
+  .flag span { color: var(--text3); font-size: 13px; }
+  .contra {
+    background: var(--red-bg);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  .claim {
+    border-top: 1px solid var(--sep);
+    padding: 14px 0;
+  }
+  .claim:first-of-type { border-top: 0; padding-top: 2px; }
+  .claim p { margin: 6px 0; font-size: 16px; }
+  .domain {
+    display: inline-block;
+    font-size: 12px; font-weight: 700;
+    border-radius: 6px; padding: 3px 8px; color: #fff;
+  }
+  .domain-FINANCIAL { background: var(--blue); }
+  .domain-LEGAL { background: var(--purple); }
+  .domain-REPUTATION { background: var(--teal); }
+  .meta { color: var(--text3); font-size: 13px; }
+  .meta .verified { color: #1d7a2e; font-weight: 700; }
+  .cite { color: var(--text3); font-size: 13px; margin-top: 4px; }
+  .green-card {
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: #f7f9f7;
+    border: 1px solid var(--sep);
+    font-size: 15px;
+  }
+  .green-card b { display: block; margin-bottom: 2px; }
+  .green-card .pts { float: right; color: #1d7a2e; font-weight: 700; }
+  details { border-top: 1px solid var(--sep); padding-top: 12px; }
+  details summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+  .foot { color: var(--text3); font-size: 13px; text-align: center; margin-top: 8px; }
+  .foot code { font-size: 12px; }
+  @media (max-width: 560px) {
+    .wrap { padding: 24px 14px 48px; }
+    h1 { font-size: 28px; }
+    .card { padding: 18px; }
+    .hero { gap: 16px; }
+    .ring { width: 110px; height: 110px; }
+    .ring b { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Receipts</h1>
+    <p class="subtitle">AI procurement due-diligence investigator &middot; Track 2: The Agent That Can Explain Why</p>
+    <span id="healthBadge" class="badge badge-off">Checking API&hellip;</span>
+  </header>
+
+  <div class="card">
+    <label for="vendorInput">Vendor / supplier</label>
+    <input id="vendorInput" type="text" placeholder="e.g. Helios Semiconductor" autocomplete="off">
+    <label for="contextInput">Procurement context</label>
+    <input id="contextInput" type="text" placeholder="e.g. Semiconductor component supplier onboarding, $2M annual contract" autocomplete="off">
+    <label>Mode</label>
+    <div class="seg" id="modeSeg">
+      <button type="button" data-mode="auto" class="on">Auto</button>
+      <button type="button" data-mode="sample">Sample</button>
+      <button type="button" data-mode="live">Live</button>
+    </div>
+    <div class="chips" id="chips">
+      <button type="button" class="chip" data-vendor="Helios Semiconductor" data-context="Semiconductor component supplier onboarding, $2M annual contract">Helios Semiconductor</button>
+      <button type="button" class="chip" data-vendor="Northwind Supply Co." data-context="Logistics supplier onboarding, $250k annual contract">Northwind Supply Co.</button>
+      <button type="button" class="chip" data-vendor="Bluepeak Manufacturing" data-context="Precision parts supplier onboarding, $500k annual contract">Bluepeak Manufacturing</button>
+      <button type="button" class="chip" data-vendor="Intel Corporation" data-context="Semiconductor supplier onboarding, $5M annual contract">Intel Corporation (live)</button>
+    </div>
+    <button id="runBtn" class="run-btn" type="button">Investigate vendor</button>
+    <p class="hint">Sample mode runs the full pipeline on cached fixtures — no credentials needed. Live mode runs against Nightshift + Zetaris; without live data the pipeline stops loudly instead of guessing.</p>
+    <div id="runStatus" class="status"></div>
+  </div>
+
+  <div id="errorCard" class="error"></div>
+  <div id="results"></div>
+
+  <p class="foot">Receipts &middot; Planner &rarr; 3 parallel Executors &rarr; Adversarial Evaluator &rarr; Writer &middot; World Model + Markovian claim lifecycle &middot; Scores are deterministic: 35 Financial + 25 Legal + 25 Contradiction + 15 Reputation = 100</p>
+</div>
+<script>
+"use strict";
+var BAR_MAX = { financial: 35, legal: 25, contradiction: 25, reputation: 15 };
+var BAR_COLOR = { financial: "#007aff", legal: "#af52de", contradiction: "#ff3b30", reputation: "#5ac8fa" };
+var BAR_LABEL = { financial: "Financial", legal: "Legal", contradiction: "Contradiction", reputation: "Reputation" };
+var TIER_COLOR = { LOW: "#34c759", MODERATE: "#ff9500", HIGH: "#ff3b30" };
+var STEPS = ["Planner splitting the investigation…", "3 Executors gathering evidence in parallel…", "Adversarial Evaluator attacking every claim…", "Writer building the cited report…"];
+var mode = "auto";
+var stepTimer = null;
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function $(id) { return document.getElementById(id); }
+
+async function refreshHealth() {
+  var badge = $("healthBadge");
+  try {
+    var res = await fetch("/health");
+    if (!res.ok) throw new Error("health " + res.status);
+    var h = await res.json();
+    badge.className = "badge " + (h.sample_mode ? "badge-sample" : "badge-live");
+    badge.textContent = h.sample_mode ? "Sample mode — cached fixtures" : "Live mode — Nightshift + Zetaris";
+  } catch (e) {
+    badge.className = "badge badge-off";
+    badge.textContent = "API offline — is the server running?";
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  var btns = document.querySelectorAll("#modeSeg button");
+  btns.forEach(function (b) { b.classList.toggle("on", b.dataset.mode === m); });
+}
+
+function setLoading(on) {
+  $("runBtn").disabled = on;
+  $("runBtn").textContent = on ? "Investigating…" : "Investigate vendor";
+  var st = $("runStatus");
+  if (on) {
+    var i = 0;
+    st.textContent = STEPS[0];
+    stepTimer = setInterval(function () {
+      i = Math.min(i + 1, STEPS.length - 1);
+      st.textContent = STEPS[i];
+    }, 1800);
+  } else {
+    if (stepTimer) { clearInterval(stepTimer); stepTimer = null; }
+    st.textContent = "";
+  }
+}
+
+function showError(msg) {
+  var card = $("errorCard");
+  card.textContent = msg;
+  card.style.display = "block";
+  $("results").innerHTML = "";
+}
+
+function breakdownHtml(b) {
+  var rows = "";
+  ["financial", "legal", "contradiction", "reputation"].forEach(function (k) {
+    var v = Number(b[k] || 0);
+    var max = BAR_MAX[k];
+    var pct = Math.max(0, Math.min(100, Math.round(v / max * 100)));
+    rows += '<div class="brow"><div class="top"><b>' + esc(BAR_LABEL[k]) + '</b><span>' + v.toFixed(2) + ' / ' + max + '</span></div>' +
+      '<div class="bar"><i style="width:' + pct + '%;background:' + BAR_COLOR[k] + '"></i></div></div>';
+  });
+  return rows;
+}
+
+function claimsHtml(claims) {
+  return (claims || []).map(function (c) {
+    var cites = (c.citations || []).map(function (x) { return esc(x); }).join(" · ");
+    var stateCls = c.state === "VERIFIED" ? "verified" : "";
+    return '<div class="claim"><span class="domain domain-' + esc(c.domain) + '">' + esc(c.domain) + '</span>' +
+      '<p>' + esc(c.statement) + '</p>' +
+      '<div class="meta">Severity ' + esc(c.severity) + ' &middot; Confidence ' + esc(c.confidence) +
+      ' &middot; <span class="' + stateCls + '">' + esc(c.state) + '</span></div>' +
+      (cites ? '<div class="cite">Sources: ' + cites + '</div>' : "") + "</div>";
+  }).join("");
+}
+
+function renderReport(r) {
+  var tier = r.tier || "?";
+  var tierColor = TIER_COLOR[tier] || "#8a8a8e";
+  var pct = Math.max(0, Math.min(100, Math.round(Number(r.score || 0))));
+  var sampleBanner = r.sample_mode
+    ? '<div class="banner banner-sample">Sample mode — cached fixture data, not a live finding. Every claim below still comes from a real pipeline run.</div>'
+    : '<div class="banner banner-live">Live mode — Nightshift + Zetaris. Financial data is load-bearing: without it, this run would have stopped instead of guessing.</div>';
+  var flags = (r.red_flags || []).map(function (f) {
+    return '<div class="flag"><b>Red flag</b> &middot; ' + esc(f.statement) + ' <span>(severity ' + esc(f.severity) + ')</span></div>';
+  }).join("");
+  var contras = (r.contradictions || []).map(function (c) {
+    return '<div class="contra"><b>Contradiction detected.</b> ' + esc(c.reason) +
+      ' <span style="color:#8a8a8e">(' + esc(c.source_claim_id) + ' vs ' + esc(c.target_claim_id) + ')</span></div>';
+  }).join("");
+  var green = (r.path_to_greenlight || []).map(function (g) {
+    return '<div class="green-card"><span class="pts">&minus;' + esc(g.points_reduced) + ' pts</span><b>' + esc(g.sla_clause) + '</b>' +
+      '<div>' + esc(g.mitigation) + '</div><div style="color:#8a8a8e;font-size:13px;margin-top:2px">Addresses: ' + esc(g.red_flag) + '</div></div>';
+  }).join("");
+  var discarded = (r.discarded_claims || []).map(function (d) {
+    return '<div class="claim"><p>' + esc(d.statement) + '</p>' +
+      '<div class="meta">Discarded after ' + esc(d.retry_count) + ' retr' + (Number(d.retry_count) === 1 ? "y" : "ies") + ' &middot; contributes zero to the score</div></div>';
+  }).join("");
+  var html = sampleBanner +
+    '<div class="card"><div class="hero">' +
+    '<div class="ring" style="background: conic-gradient(' + tierColor + ' 0 ' + pct + '%, #e5e5ea ' + pct + '% 100%)">' +
+    '<div style="background:#fff;width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+    '<b>' + esc(r.score) + '</b><span>/ 100</span></div></div>' +
+    '<div style="flex:1;min-width:240px"><span class="tier tier-' + esc(tier) + '">' + esc(tier) + '</span>' +
+    '<p class="rec">' + esc(r.recommendation) + '</p>' +
+    '<p class="vendor-line">' + esc(r.vendor_name) + (r.procurement_context ? " &middot; " + esc(r.procurement_context) : "") + "</p></div></div></div>" +
+    '<div class="card"><h2>Score breakdown</h2>' + breakdownHtml(r.breakdown || {}) + "</div>";
+  if (flags || contras) {
+    html += '<div class="card"><h2>What the Evaluator caught</h2>' + contras + flags + "</div>";
+  }
+  html += '<div class="card"><h2>Verified claims (' + (r.claims || []).length + ')</h2>' + claimsHtml(r.claims) + "</div>";
+  if (green) {
+    html += '<div class="card"><h2>Path to Greenlight</h2>' + green +
+      '<p style="font-size:15px">Residual score after mitigations: <b>' + esc(r.residual_score) + ' / 100 (' + esc(r.residual_tier) + ')</b></p></div>';
+  }
+  if (discarded) {
+    html += '<div class="card"><details><summary>Rejected Rumors — discarded claims (' + (r.discarded_claims || []).length + ')</summary>' + discarded + "</details></div>";
+  }
+  html += '<p class="foot">Model: <code>' + esc(r.model) + '</code> &middot; Traces: <code>' + esc(r.trace_file) + '</code> &middot; Generated: <code>' + esc(r.generated_at) + '</code></p>';
+  $("results").innerHTML = html;
+  window.scrollTo({ top: $("results").offsetTop - 12, behavior: "smooth" });
+}
+
+async function runInvestigation() {
+  var vendor = $("vendorInput").value.trim();
+  var context = $("contextInput").value.trim();
+  if (!vendor) {
+    showError("Enter a vendor name first — or tap one of the example chips.");
+    $("vendorInput").focus();
+    return;
+  }
+  var body = { vendor_name: vendor, procurement_context: context };
+  if (mode === "sample") body.sample_mode = true;
+  if (mode === "live") body.sample_mode = false;
+  $("errorCard").style.display = "none";
+  setLoading(true);
+  try {
+    var res = await fetch("/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (res.status === 404) {
+      showError("Unknown vendor in this mode: " + (data.detail || vendor) +
+        " — in sample mode try Helios Semiconductor, Northwind Supply Co. or Bluepeak Manufacturing.");
+    } else if (res.status === 502) {
+      showError("Zetaris is unavailable, so the pipeline stopped instead of guessing: " + (data.detail || "load-bearing data source failed"));
+    } else if (!res.ok) {
+      showError("Investigation failed: " + (data.detail || ("HTTP " + res.status)));
+    } else {
+      renderReport(data);
+    }
+  } catch (e) {
+    showError("Could not reach the API — is the server running on port 8000? (" + e.message + ")");
+  }
+  setLoading(false);
+  refreshHealth();
+}
+
+document.querySelectorAll("#modeSeg button").forEach(function (b) {
+  b.addEventListener("click", function () { setMode(b.dataset.mode); });
+});
+document.querySelectorAll("#chips .chip").forEach(function (c) {
+  c.addEventListener("click", function () {
+    $("vendorInput").value = c.dataset.vendor;
+    $("contextInput").value = c.dataset.context;
+  });
+});
+$("runBtn").addEventListener("click", runInvestigation);
+$("vendorInput").addEventListener("keydown", function (e) { if (e.key === "Enter") runInvestigation(); });
+$("contextInput").addEventListener("keydown", function (e) { if (e.key === "Enter") runInvestigation(); });
+refreshHealth();
+</script>
+</body>
+</html>
