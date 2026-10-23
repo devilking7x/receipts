@@ -39,8 +39,13 @@ class ZetarisClient:
         return bool(self.config.zetaris_api_key
                     or self.config.zetaris_username)
 
-    def query(self, sql, limit=100):
-        """Run a SQL query and return a list of row dicts."""
+    def query(self, sql, limit=100, columns=None):
+        """Run a SQL query and return a list of row dicts.
+
+        Zetaris REST returns rows as value arrays; this normalizes
+        them to dicts using the response's column metadata when
+        present, else the caller-supplied column order.
+        """
         if self.config.sample_mode:
             # Sample mode has no live SQL engine; the caller uses
             # query_financials() which serves fixture rows instead.
@@ -73,16 +78,43 @@ class ZetarisClient:
         except Exception as exc:
             raise ZetarisDataLayerUnavailableError(
                 "Zetaris REST request failed: %s" % exc) from exc
+        def _pick_columns(obj):
+            for key in ("columns", "columnNames", "column_names",
+                        "fields", "header"):
+                cols = obj.get(key)
+                if isinstance(cols, list) and cols:
+                    if isinstance(cols[0], dict):
+                        return [c.get("name") for c in cols if c.get("name")]
+                    return [str(c) for c in cols]
+            return None
+
+        rows = None
+        meta_columns = None
         if isinstance(payload, list):
-            return payload
-        if isinstance(payload, dict):
+            rows = payload
+        elif isinstance(payload, dict):
+            meta_columns = _pick_columns(payload)
             for key in ("data", "rows", "result", "records"):
-                rows = payload.get(key)
-                if isinstance(rows, list):
-                    return rows
-                if isinstance(rows, dict):
-                    return [rows]
-        return []
+                val = payload.get(key)
+                if isinstance(val, list):
+                    rows = val
+                    break
+                if isinstance(val, dict):
+                    if meta_columns is None:
+                        meta_columns = _pick_columns(val)
+                    nested = val.get("rows")
+                    if isinstance(nested, list):
+                        rows = nested
+                    else:
+                        rows = [val]
+                    break
+        if not rows:
+            return []
+        if isinstance(rows[0], list):
+            cols = meta_columns or columns
+            if cols:
+                return [dict(zip(cols, row)) for row in rows]
+        return rows
 
     def query_financials(self, vendor_name):
         """Return financial rows for a vendor.
@@ -102,4 +134,8 @@ class ZetarisClient:
             "SELECT f.* FROM receipts.corp_financials_2025 f "
             "JOIN receipts.entity_metadata e ON f.vendor = e.vendor "
             "WHERE f.vendor = '%s'" % vendor_name.replace("'", "''"))
-        return self.query(sql)
+        # SELECT f.* expands to the view's columns in definition order.
+        return self.query(
+            sql,
+            columns=["vendor", "metric", "value", "excerpt",
+                     "severity", "confidence", "citation"])
